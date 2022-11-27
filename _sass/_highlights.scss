@@ -85,7 +85,12 @@
 
 .highlight table td { padding: 5px; }
 .highlight table pre { margin: 0; }
+
 .highlight {
+  
+}
+
+div[class *= "highlight"] {
   color: #faf6e4;
   background-color: #122b3b;
   padding: 1%;
