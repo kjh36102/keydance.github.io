@@ -7,7 +7,6 @@ BRANCH_NAME = 'master'
 import sys
 import os
 import re
-import requests
 
 file_path = sys.argv[1]
 file_path = os.path.abspath(file_path)
@@ -34,10 +33,6 @@ origin_file.close()
 regex = '!\[.*\]\(.*\)'
 find_list = re.findall(regex, origin_raw)
 
-#변환 및 오류검출
-cnt_success = 0
-cnt_failed = 0
-
 for elem in find_list:
     if 'https' in elem: continue
 
@@ -48,20 +43,12 @@ for elem in find_list:
 
     converted_url = (URL_BASE + img_name).replace(' ', '%20')
 
-    status_code = requests.get(converted_url).status_code
-
-    if status_code == 200:
-        origin_raw = origin_raw.replace(elem, tag_split[0] + '(' + converted_url + ') <!-- CONVERTED -->')
-        cnt_success += 1
-        print('...DONE')
-    else :
-        origin_raw = origin_raw.replace(elem, elem + ' <!-- ERROR -->')
-        cnt_failed += 1
-        print('...FAILED')
+    origin_raw = origin_raw.replace(elem, tag_split[0] + '(' + converted_url + ') <!-- CONVERTED -->')
+    print('...DONE')
 
 #파일에 쓰기
 target_file = open(file_path, 'w', encoding='utf-8')
 target_file.writelines(origin_raw)
 target_file.close()
 
-print(f'* Converting All Done!\t\tTOTAL: {cnt_success + cnt_failed}\tSUCCESS: {cnt_success}\tFAILED: {cnt_failed}')
+print(f'* Converting All Done!')
