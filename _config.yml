@@ -86,5 +86,3 @@ exclude:
   - CNAME
 
 future: true
-
-img_path: 'https://raw.githubusercontent.com/kjh36102/kjh36102.github.io/master/_posts/{{page.categories}}/{{page.date | date: "%Y-%m-%d-"}}{{page.id | remove: "/"}}'
