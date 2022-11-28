@@ -95,7 +95,8 @@ pre.highlight {   //코드블럭 디자인
   background-color: #122b3b;
   padding: 2%;
   border-radius: 0.7em;
-  white-space: pre-wrap !important;
+  // white-space: pre-wrap !important;
+  overflow-x: scroll
 }
 
 p code{      //인라인 코드
@@ -105,9 +106,9 @@ p code{      //인라인 코드
   border-radius: 0.5em;
 }
 
-.highlight ::-webkit-scrollbar {
-  display: none;
-}
+// .highlight ::-webkit-scrollbar {
+//   display: none;
+// }
 
 .highlight .gl {
   color: #dee5e7;
