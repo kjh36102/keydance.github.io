@@ -1,5 +1,5 @@
----
----
+//---
+//---
 
 //
 // IMPORTS
@@ -68,13 +68,6 @@ p {
   margin: 15px 0;
 }
 
-p code{
-  color: #faf6e4;
-  background-color: #122b3b;
-  padding: 1%;
-  border-radius: 0.5em;
-}
-
 a {
   color: $blue;
   text-decoration: none;
@@ -117,9 +110,9 @@ img {
   max-width: 100%;
 }
 
-pre {
-  overflow-x: scroll;
-}
+// pre {
+//   overflow-x: scroll;
+// }
 
 // Fixes images in popup boxes from Google Translate
 .gmnoprint img {
