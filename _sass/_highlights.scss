@@ -95,8 +95,19 @@ pre.highlight {   //코드블럭 디자인
   background-color: #122b3b;
   padding: 2%;
   border-radius: 0.7em;
-  // white-space: pre-wrap !important;
-  overflow-x: scroll
+  overflow-x: auto
+}
+
+pre::-webkit-scrollbar {
+  height: 5px;
+}
+
+pre::-webkit-scrollbar-thumb {
+  background-color: #778288;
+}
+
+pre::-webkit-scrollbar-track {
+  background-color: #5F9BB9;
 }
 
 p code{      //인라인 코드
