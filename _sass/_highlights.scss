@@ -98,7 +98,7 @@ div[class *= "highlight"] {
 }
 
 pre[class *= "highlight"]{
-  overflow: scroll
+  overflow-x: scroll;
 }
 
 .highlight ::-webkit-scrollbar {
