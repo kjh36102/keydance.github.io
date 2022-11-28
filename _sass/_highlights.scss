@@ -98,7 +98,7 @@ div[class *= "highlight"] {
 }
 
 pre[class *= "highlight"]{
-  word-break: break-all;
+  overflow: scroll
 }
 
 .highlight ::-webkit-scrollbar {
