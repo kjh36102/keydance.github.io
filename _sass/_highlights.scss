@@ -97,6 +97,10 @@ div[class *= "highlight"] {
   border-radius: 1em;
 }
 
+pre[class *= "highlight"]{
+  word-break: break-all;
+}
+
 .highlight ::-webkit-scrollbar {
   display: none;
 }
