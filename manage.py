@@ -36,7 +36,11 @@ def extract_info(file_path):
     post_dir = path_splits.pop()
     category = path_splits.pop()
 
-    return category, post_dir
+    date_split = post_dir.split('-')
+    date = str.join('-', date_split[:-1])
+    
+
+    return category, post_dir, date
 
 # --------------------------------------------------------
 
@@ -55,7 +59,7 @@ def convert_image(file_path):
     regex = '!\[.*\]\(.*\)'
     find_list = re.findall(regex, origin_raw)
 
-    category,  post_dir = extract_info(file_path)
+    category,  post_dir, _ = extract_info(file_path)
     url = URL_BASE.format(category=category, post_dir=post_dir)
 
     for elem in find_list:
@@ -80,37 +84,46 @@ def convert_image(file_path):
 
 
 def moveto(file_path, new_category_name, new_post_name):
-    category,  post_name = extract_info(file_path)
+    category,  post_name, date = extract_info(file_path)
+
+    new_post_name = date + '-' + new_post_name
 
     old_path = os.path.abspath(f'./_posts/{category}/{post_name}')
     new_path = os.path.abspath(f'./_posts/{new_category_name}/{new_post_name}')
 
+    #데이터 변경
     origin_raw = read_file(file_path)
 
+    origin_raw = origin_raw.replace(f'title: {post_name.split("-")[-1]}', f'title: {new_post_name.split("-")[-1]}', 1)    #헤더 변경
     origin_raw = origin_raw.replace(f'[{category}]', f'[{new_category_name}]', 1)
-    origin_raw = origin_raw.replace(f'/{category}/', f'/{new_category_name}/')
-    origin_raw = origin_raw.replace(f'/{post_name}/', f'/{new_post_name}/')
+
+    origin_raw = origin_raw.replace(f'/{category}/', f'/{new_category_name}/')  #이름들 변경
+    origin_raw = origin_raw.replace(f'/{post_name.replace(" ", "%20")}/', f'/{new_post_name.replace(" ", "%20")}/')
 
     write_file(old_path + '/' + new_post_name + '.md', origin_raw)
-
-    os.remove(file_path)
+    os.remove(file_path) #원본폴더 파일 지우기
 
     #폴더 옮기기
     shutil.move(old_path, new_path)
+
+    #이전 카테고리에 포스팅 없으면 카테고리 삭제
+    category_dir = os.path.abspath(f'./_posts/{category}')
+    if os.listdir(category_dir).__len__() == 0:
+        os.rmdir(category_dir)
 
 # -------------------메인-------------------------
 
 args = sys.argv
 
-try:
-    if args[1] in ['--help', '-h']:
-        show_help()
-    elif args[1] in ['--convert_image', '-c']:
-        convert_image(os.path.abspath(args[2]))
-    elif args[1] in ['--rename', '-n']:
-        moveto(os.path.abspath(args[2]), args[3], args[4])
-    else:
-        print(args[1] + ' 은(는) 알 수 없는 명령입니다.')
-        print('도움말을 보시려면 python manage.py -h 를 입력하세요.')
-except Exception as e:
-    print('오류 발생: ', e)
+# try:
+if args[1] in ['--help', '-h']:
+    show_help()
+elif args[1] in ['--convert_image', '-c']:
+    convert_image(os.path.abspath(args[2]))
+elif args[1] in ['--rename', '-n']:
+    moveto(os.path.abspath(args[2]), args[3], args[4])
+else:
+    print(args[1] + ' 은(는) 알 수 없는 명령입니다.')
+    print('도움말을 보시려면 python manage.py -h 를 입력하세요.')
+# except Exception:
+#     pass
