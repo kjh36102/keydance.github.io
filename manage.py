@@ -3,7 +3,6 @@ import sys
 import os
 import re
 import shutil
-import time
 GITHUB_USER = 'kjh36102'
 REPOSITORY_NAME = 'kjh36102.github.io'
 BRANCH_NAME = 'master'
