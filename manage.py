@@ -60,6 +60,12 @@ move              | mv       | 포스팅의 카테고리, 날짜, 이름을 바�
     print(help_str)
 
 
+def upload_all():
+    os.system('git add *')
+    os.system('git commit -m "auto committed by manage.py"')
+    os.system('git push origin master')
+    print('\t* Upload Completed!')
+
 def convert_image(file_path):
     origin_raw = read_file(file_path)
 
@@ -128,7 +134,7 @@ def move(file_path, new_category_name, new_post_name, new_date):
 
     print(f'\tTarget Post: [{category}] {date}-{post_name}')
     print(f'\t\t  -> [{new_category_name}] {new_date}-{new_post_name}')
-    print('\t\t\t\t\t\t\t...Done')
+    print('\t* Moving Completed!')
 
 # -------------------메인-------------------------
 
@@ -154,6 +160,8 @@ except IndexError:
 try:
     if cmd in ['help', '?']:
         show_help()
+    elif cmd in ['upload', 'up']:
+        upload_all()
     elif cmd in ['convert_image', 'cv']:
         convert_image(os.path.abspath(get_one(['--file', '-f'], args)))
     elif cmd in ['move', 'mv']:
