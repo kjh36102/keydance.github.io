@@ -162,7 +162,7 @@ def move(file_path, new_category_name, new_post_name, new_date):
     shutil.move(old_path, new_path)
 
     #날짜와 이름에 변화가 있는 경우만 새롭게 생긴 파일 삭제
-    if [date, post_name] != [new_date, new_post_name]:
+    if date != new_date or post_name != new_post_name:
         old_file = new_path + '/' + date + '-' + post_name + '.md'
         os.remove(old_file) #오래된 파일 지우기
         print('old_file:', old_file)
