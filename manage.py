@@ -48,8 +48,14 @@ def extract_info(file_path):
 
 def show_help():
     help_str = '''\
-[command]           | [alias]  |                      [desc]                    |   [args]
---convert_image     | -c       | md 파일의 이미지url을 github url로 바꿉니다.   | 0: md파일 경로
+[command]         | [alias]  |                      [desc]                    |   [args]
+--------------------------------------------------------------------------------------------
+convert_image     | cv       | md 파일의 이미지url을 github url로 바꿉니다.   | -f 파일 경로
+--------------------------------------------------------------------------------------------
+move              | mv       | 포스팅의 카테고리, 날짜, 이름을 바꿉니다.      | -f 파일 경로
+                               선택적 변경이 가능합니다.                      | -c 카테고리 이름 
+                                                                              | -d 날짜
+                                                                              | -p 포스팅 이름
 '''
     print(help_str)
 
@@ -87,14 +93,10 @@ def convert_image(file_path):
 def move(file_path, new_category_name, new_post_name, new_date):
     category, _, post_name, date = extract_info(file_path)
 
-    print(category, post_name, date)
-
     #명령인자 검사
     if new_category_name == None: new_category_name = category
     if new_post_name == None: new_post_name = post_name
     if new_date == None: new_date = date
-
-    print('args check:',new_category_name,new_post_name,new_date)
 
     old_path = os.path.abspath(f'./_posts/{category}/{date}-{post_name}')
     new_path = os.path.abspath(f'./_posts/{new_category_name}/{new_date}-{new_post_name}')
@@ -113,14 +115,20 @@ def move(file_path, new_category_name, new_post_name, new_date):
     #폴더 옮기기
     shutil.move(old_path, new_path)
 
-    old_file = new_path + '/' + date + '-' + post_name + '.md'
-    os.remove(old_file) #오래된 파일 지우기
-    print('removed:', old_file)
+    #날짜와 이름에 변화가 있는 경우만 새롭게 생긴 파일 삭제
+    if [date, post_name] != [new_date, new_post_name]:
+        old_file = new_path + '/' + date + '-' + post_name + '.md'
+        os.remove(old_file) #오래된 파일 지우기
+        print('old_file:', old_file)
 
     #이전 카테고리에 포스팅 없으면 카테고리 삭제
     category_dir = os.path.abspath(f'./_posts/{category}')
     if os.listdir(category_dir).__len__() == 0:
         os.rmdir(category_dir)
+
+    print(f'\tTarget Post: [{category}] {date}-{post_name}')
+    print(f'\t\t  -> [{new_category_name}] {new_date}-{new_post_name}')
+    print('\t\t\t\t\t\t\t...Done')
 
 # -------------------메인-------------------------
 
@@ -143,21 +151,21 @@ except IndexError:
     print('명령인자가 충분하지 않습니다.')
     sys.exit(1)
 
-# try:
-if cmd in ['help', '?']:
-    show_help()
-elif cmd in ['convert_image', 'cv']:
-    convert_image(os.path.abspath(get_one(['--file', '-f'], args)))
-elif cmd in ['move', 'mv']:
-    move(
-        os.path.abspath(get_one(['--file', '-f'], args)),
-        get_one(['--category', '-c'], args),
-        get_one(['--post', '-p'], args),
-        get_one(['--date', '-d'], args)
-    )
-else:
-    print(cmd + ' 은(는) 알 수 없는 명령입니다.')
-    print('도움말을 보시려면 python manage.py ? 를 입력하세요.')
-# except Exception as e:
-#     print('오류가 발생했습니다:', e)
-#     sys.exit(1)
+try:
+    if cmd in ['help', '?']:
+        show_help()
+    elif cmd in ['convert_image', 'cv']:
+        convert_image(os.path.abspath(get_one(['--file', '-f'], args)))
+    elif cmd in ['move', 'mv']:
+        move(
+            os.path.abspath(get_one(['--file', '-f'], args)),
+            get_one(['--category', '-c'], args),
+            get_one(['--post', '-p'], args),
+            get_one(['--date', '-d'], args)
+        )
+    else:
+        print(cmd + ' 은(는) 알 수 없는 명령입니다.')
+        print('도움말을 보시려면 python manage.py ? 를 입력하세요.')
+except Exception as e:
+    print('오류가 발생했습니다:', e)
+    sys.exit(1)
