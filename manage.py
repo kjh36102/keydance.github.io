@@ -3,6 +3,7 @@ import sys
 import os
 import re
 import shutil
+import time
 GITHUB_USER = 'kjh36102'
 REPOSITORY_NAME = 'kjh36102.github.io'
 BRANCH_NAME = 'master'
@@ -49,14 +50,20 @@ def show_help():
     help_str = '''\
 [command]         | [alias]  |                      [desc]                    |   [args]
 --------------------------------------------------------------------------------------------
-convert_image     | cv       | md 파일의 이미지url을 github url로 바꿉니다.   | -f 파일 경로
+convert_image     | cv       | md 파일의 이미지url을 github url로 바꿉니다.   | -f *파일 경로
 --------------------------------------------------------------------------------------------
 upload            | up       | 블로그를 github에 upload 합니다.               | 
 --------------------------------------------------------------------------------------------
-move              | mv       | 포스팅의 카테고리, 날짜, 이름을 바꿉니다.      | -f 파일 경로
-                               선택적 변경이 가능합니다.                      | -c 카테고리 이름 
-                                                                              | -d 날짜
-                                                                              | -p 포스팅 이름
+new_post          | new      | 새로운 포스팅을 작성합니다.                    | -c *카테고리 이름
+                                                                              | -t *포스팅 이름
+                                                                              | -d  날짜
+--------------------------------------------------------------------------------------------
+move              | mv       | 포스팅의 카테고리, 날짜, 이름을 바꿉니다.      | -f *파일 경로
+                               선택적 변경이 가능합니다.                      | -c  카테고리 이름 
+                                                                              | -d  날짜
+                                                                              | -t  포스팅 이름
+--------------------------------------------------------------------------------------------
+                                                                * 별이 있는 인자는 필수항목입니다.
 '''
     print(help_str)
 
@@ -66,6 +73,38 @@ def upload_all():
     os.system('git commit -m "auto committed by manage.py"')
     os.system('git push origin master')
     print('\t* Upload Completed!')
+
+def create_new_post(category, title, date):
+
+    #명령인자 검사
+    if category == None: raise Exception('카테고리 이름이 없습니다.')
+    if title == None: raise Exception('포스팅 제목이 없습니다.')
+    if date == None: date = time.strftime('%Y-%m-%d', time.localtime())
+
+    #date 형식 검사
+    if bool(re.match('\d{4}-\d{2}-\d{2}', date)) == False: raise Exception('날짜 형식이 올바르지 않습니다.')
+
+    dir = f'./_posts/{category}'
+    if os.path.exists(dir) == False:
+        os.mkdir(dir)
+
+    dir += f'/{date}-{title}'
+    if os.path.exists(dir) == False:
+        os.mkdir(dir)
+
+    data = f'''\
+---
+layout: post
+title: {title}
+categories: [{category}]
+---
+
+### **새로운 포스팅!!**
+manage.py가 작성했습니다.
+\
+'''
+
+    write_file(f'{dir}/{date}-{title}.md', data)
 
 def convert_image(file_path):
     origin_raw = read_file(file_path)
@@ -158,23 +197,29 @@ except IndexError:
     print('명령인자가 충분하지 않습니다.')
     sys.exit(1)
 
-try:
-    if cmd in ['help', '?']:
-        show_help()
-    elif cmd in ['upload', 'up']:
-        upload_all()
-    elif cmd in ['convert_image', 'cv']:
-        convert_image(os.path.abspath(get_one(['--file', '-f'], args)))
-    elif cmd in ['move', 'mv']:
-        move(
-            os.path.abspath(get_one(['--file', '-f'], args)),
-            get_one(['--category', '-c'], args),
-            get_one(['--post', '-p'], args),
-            get_one(['--date', '-d'], args)
-        )
-    else:
-        print(cmd + ' 은(는) 알 수 없는 명령입니다.')
-        print('도움말을 보시려면 python manage.py ? 를 입력하세요.')
-except Exception as e:
-    print('오류가 발생했습니다:', e)
-    sys.exit(1)
+# try:
+if cmd in ['help', '?']:
+    show_help()
+elif cmd in ['upload', 'up']:
+    upload_all()
+elif cmd in ['new_post', 'new']:
+    create_new_post(
+        get_one(['--category', '-c'], args),
+        get_one(['--title', '-t'], args),
+        get_one(['--date', '-d'], args)
+    )
+elif cmd in ['convert_image', 'cv']:
+    convert_image(os.path.abspath(get_one(['--file', '-f'], args)))
+elif cmd in ['move', 'mv']:
+    move(
+        os.path.abspath(get_one(['--file', '-f'], args)),
+        get_one(['--category', '-c'], args),
+        get_one(['--title', '-t'], args),
+        get_one(['--date', '-d'], args)
+    )
+else:
+    print(cmd + ' 은(는) 알 수 없는 명령입니다.')
+    print('도움말을 보시려면 python manage.py ? 를 입력하세요.')
+# except Exception as e:
+#     print('오류가 발생했습니다:', e)
+#     sys.exit(1)
