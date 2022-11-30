@@ -1,4 +1,4 @@
 ---
 layout: category
-title: 라즈베릿파이4
+title: 라즈베리파이4
 ---
