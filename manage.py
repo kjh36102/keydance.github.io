@@ -11,6 +11,7 @@ BRANCH_NAME = 'master'
 
 GIT_UPLOAD_CMD = f'''\
 git add *
+git status
 git commit -m "auto commited by manage.py"
 git push origin {BRANCH_NAME}
 '''
