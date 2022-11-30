@@ -10,9 +10,9 @@ REPOSITORY_NAME = 'kjh36102.github.io'
 BRANCH_NAME = 'master'
 
 GIT_UPLOAD_CMD = f'''\
-git add *;
-git commit -m 'auto commited by manage.py';
-git push origin {BRANCH_NAME};
+git add *
+git commit -m "auto commited by manage.py"
+git push origin {BRANCH_NAME}
 '''
 
 URL_BASE = 'https://raw.githubusercontent.com/'+GITHUB_USER+'/' + \
@@ -83,9 +83,8 @@ def extract_info(file_path):
 # --------------------------------------------------------
 
 def upload_all():
-    os.system('git add *')
-    os.system('git commit -m "auto committed by manage.py"')
-    os.system('git push origin master')
+    cmd_lines = GIT_UPLOAD_CMD.split('\n')[:-1]
+    for cmd in cmd_lines: os.system(cmd)
     print('\t* Upload Completed!')
 
 def create_new_post(category, title, date):
