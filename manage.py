@@ -59,13 +59,11 @@ def read_file(file_path):
 
     return origin_raw
 
-
 def write_file(file_path, text):
     # 파일에 쓰기
     target_file = open(file_path, 'w', encoding='utf-8')
     target_file.writelines(text)
     target_file.close()
-
 
 def extract_info(file_path):
     # 입력받은 경로에서 정보 추출
